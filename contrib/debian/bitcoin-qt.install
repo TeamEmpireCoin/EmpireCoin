@@ -1,0 +1,6 @@
+EmpireCoin-qt usr/bin
+share/pixmaps/EmpireCoin32.xpm usr/share/pixmaps
+share/pixmaps/EmpireCoin16.xpm usr/share/pixmaps
+share/pixmaps/EmpireCoin128.png usr/share/pixmaps
+debian/EmpireCoin-qt.desktop usr/share/applications
+debian/empirecoin-qt.protocol usr/share/kde4/services/

@@ -1,0 +1,20 @@
+This directory contains files used to package EmpireCoind/EmpireCoin-qt
+for Debian-based Linux systems.
+
+If you compile EmpireCoind/EmpireCoin-qt yourself, there are some
+useful files here:
+
+EmpireCoin: URI support
+--------------------
+
+EmpireCoin-qt.desktop  (Gnome / Open Desktop)
+To install:
+  sudo desktop-file-install EmpireCoin-qt.desktop
+  sudo update-desktop-database
+
+If you build yourself, you will either need to modify the paths in
+the .desktop file or copy or symlink your EmpireCoin-qt binary to /usr/bin
+and the ../../share/pixmaps/EmpireCoin128.png to /usr/share/pixmaps
+
+empirecoin-qt.protocol (KDE)
+

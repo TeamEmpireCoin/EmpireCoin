@@ -1,0 +1,9 @@
+Building EmpireCoin
+
+See doc/readme-qt.rst for instructions on building EmpireCoin-Qt,
+the intended-for-end-users, nice-graphical-interface, reference
+implementation of EmpireCoin.
+
+See doc/build-*.txt for instructions on building EmpireCoind,
+the intended-for-services, no-graphical-interface, reference
+implementation of EmpireCoin.
