@@ -545,13 +545,13 @@ void WalletModel::listLockedCoins(std::vector<COutPoint>& vOutpts)
 
 int WalletModel::getEmpireCoinNationIndex(std::string nation)
 {
-    int index = 16; // unknown
+    int index = 16;
     typedef std::map<const std::string, const int> NationIndexMapType;
     static NationIndexMapType nationMap = boost::assign::map_list_of
-        ( "Brazil",  1 ) ( "China",      2 ) ( "France",          3 ) ( "Germany",        4 )
-        ( "India",   5 ) ( "Indonesia",  6 ) ( "Iran",            7 ) ( "Italy",          8 )
-        ( "Japan",   9 ) ( "Mexico",    10 ) ( "Nigeria",        11 ) ( "Pakistan",      12 )
-        ( "Russia", 13 ) ( "Turkey",    14 ) ( "United Kingdom", 15 ) ( "United States", 16 );
+        ( "China", 1 ) ( "USA", 2 ) ( "India", 3 ) ( "Brazil", 4 )
+        ( "Indonesia", 5 ) ( "Japan", 6 ) ( "Russia", 7 ) ( "Germany", 8 )
+        ( "Mexico", 9 ) ( "Nigeria", 10 ) ( "France", 11 ) ( "UK", 12 )
+        ( "Pakistan", 13 ) ( "Italy", 14 ) ( "Turkey", 15 ) ( "Iran", 16 );
 
     NationIndexMapType::iterator iter = nationMap.find(nation);
     if (iter != nationMap.end()) {

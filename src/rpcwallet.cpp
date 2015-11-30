@@ -1202,13 +1202,15 @@ Value listsinceblock(const Array& params, bool fHelp)
 
     Array transactions;
 
-    for (map<uint256, CWalletTx>::iterator it = pwalletMain->mapWallet.begin(); it != pwalletMain->mapWallet.end(); it++)
-    {
-        CWalletTx tx = (*it).second;
+    BOOST_FOREACH(CWallet* pwallet, setpwalletRegistered) {
+		for (map<uint256, CWalletTx>::iterator it = pwallet->mapWallet.begin(); it != pwallet->mapWallet.end(); it++)
+		{
+			CWalletTx tx = (*it).second;
 
-        if (depth == -1 || tx.GetDepthInMainChain() < depth)
-            ListTransactions(tx, "*", 0, true, transactions);
-    }
+			if (depth == -1 || tx.GetDepthInMainChain() < depth)
+				ListTransactions(tx, "*", 0, true, transactions);
+		}
+	}
 
     uint256 lastblock;
 
