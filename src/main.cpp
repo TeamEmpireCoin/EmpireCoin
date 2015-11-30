@@ -4220,10 +4220,10 @@ NationIndexType getNationIndexByVotingAddress(std::string address)
     const char c = std::toupper(prefixStr[0]);
     typedef std::map<const char, const NationIndexType> NationMapType;
     static NationMapType nationMap = boost::assign::map_list_of
-        ( '1', Brazil ) ( '2',     China ) ( '3',        France ) ( '4',      Germany )
-        ( '5',  India ) ( '6', Indonesia ) ( '7',          Iran ) ( '8',        Italy )
-        ( '9',  Japan ) ( 'A',    Mexico ) ( 'B',       Nigeria ) ( 'C',     Pakistan )
-        ( 'D', Russia ) ( 'E',    Turkey ) ( 'F', UnitedKingdom ) ( 'G', UnitedStates );
+        ( '1', China ) ( '2', USA ) ( '3', India ) ( '4', Brazil )
+        ( '5', Indonesia ) ( '6', Japan ) ( '7', Russia ) ( '8', Germany )
+        ( '9', Mexico ) ( 'A', Nigeria ) ( 'B', France ) ( 'C', UK )
+        ( 'D', Pakistan ) ( 'E', Italy ) ( 'F', Turkey ) ( 'G', Iran );
 
     NationMapType::iterator iter = nationMap.find(c);
     if (iter != nationMap.end()) {
@@ -5049,24 +5049,6 @@ static inline bool addressSpotTaken(const std::string address)
 }
 
 std::string getNationByVotingAddress(std::string address) {
-/*
-1. Brazil
-2. China
-3. France
-4. Germany
-5. India
-6. Indonesia
-7. Iran
-8. Italy
-9. Japan
-10. Mexico
-11. Nigeria
-12. Pakistan
-13. Russia
-14. Turkey
-15. UnitedKingdom
-16. UnitedStates
-*/
     std::string error = "Unknown";
     if (address.size() < 10)
         return error;
@@ -5076,10 +5058,10 @@ std::string getNationByVotingAddress(std::string address) {
     std::string prefix(1, c);
     typedef std::map<const std::string, const std::string> NationMapType;
     static NationMapType nationMap = boost::assign::map_list_of
-        ( "1", "Brazil" ) ( "2",     "China" ) ( "3",         "France" ) ( "4",       "Germany" )
-        ( "5",  "India" ) ( "6", "Indonesia" ) ( "7",           "Iran" ) ( "8",         "Italy" )
-        ( "9",  "Japan" ) ( "A",    "Mexico" ) ( "B",        "Nigeria" ) ( "C",      "Pakistan" )
-        ( "D", "Russia" ) ( "E",    "Turkey" ) ( "F", "United Kingdom" ) ( "G", "United States" );
+        ( "1", "China" ) ( "2", "USA" ) ( "3", "India" ) ( "4", "Brazil" )
+        ( "5", "Indonesia" ) ( "6", "Japan" ) ( "7", "Russia" ) ( "8", "Germany" )
+        ( "9", "Mexico" ) ( "A", "Nigeria" ) ( "B", "France" ) ( "C", "UK" )
+        ( "D", "Pakistan" ) ( "E", "Italy" ) ( "F", "Turkey" ) ( "G", "Iran" );
 
     NationMapType::iterator iter = nationMap.find(prefix);
     if (iter != nationMap.end()) {
