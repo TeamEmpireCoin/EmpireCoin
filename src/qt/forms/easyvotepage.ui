@@ -94,23 +94,6 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_6">
            <item>
-            <widget class="QPushButton" name="pushButton_Brazil">
-             <property name="text">
-              <string>Brazil</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../empirecoin.qrc">
-               <normaloff>:/icons/brazil</normaloff>:/icons/brazil</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>125</width>
-               <height>100</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="pushButton_China">
              <property name="text">
               <string>China</string>
@@ -128,13 +111,102 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_France">
+            <widget class="QPushButton" name="pushButton_USA">
              <property name="text">
-              <string>France</string>
+              <string>USA</string>
              </property>
              <property name="icon">
               <iconset resource="../empirecoin.qrc">
-               <normaloff>:/icons/france</normaloff>:/icons/france</iconset>
+               <normaloff>:/icons/usa</normaloff>:/icons/usa</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>125</width>
+               <height>100</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_India">
+             <property name="text">
+              <string>India</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../empirecoin.qrc">
+               <normaloff>:/icons/india</normaloff>:/icons/india</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>125</width>
+               <height>100</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_Brazil">
+             <property name="text">
+              <string>Brazil</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../empirecoin.qrc">
+               <normaloff>:/icons/brazil</normaloff>:/icons/brazil</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>125</width>
+               <height>100</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QPushButton" name="pushButton_Indonesia">
+             <property name="text">
+              <string>Indonesia</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../empirecoin.qrc">
+               <normaloff>:/icons/indonesia</normaloff>:/icons/indonesia</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>125</width>
+               <height>100</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_Japan">
+             <property name="text">
+              <string>Japan</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../empirecoin.qrc">
+               <normaloff>:/icons/japan</normaloff>:/icons/japan</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>125</width>
+               <height>100</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_Russia">
+             <property name="text">
+              <string>Russia</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../empirecoin.qrc">
+               <normaloff>:/icons/russia</normaloff>:/icons/russia</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -164,96 +236,7 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <widget class="QPushButton" name="pushButton_India">
-             <property name="text">
-              <string>India</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../empirecoin.qrc">
-               <normaloff>:/icons/india</normaloff>:/icons/india</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>125</width>
-               <height>100</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_Indonesia">
-             <property name="text">
-              <string>Indonesia</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../empirecoin.qrc">
-               <normaloff>:/icons/indonesia</normaloff>:/icons/indonesia</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>125</width>
-               <height>100</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_Iran">
-             <property name="text">
-              <string>Iran</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../empirecoin.qrc">
-               <normaloff>:/icons/iran</normaloff>:/icons/iran</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>125</width>
-               <height>100</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_Italy">
-             <property name="text">
-              <string>Italy</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../empirecoin.qrc">
-               <normaloff>:/icons/italy</normaloff>:/icons/italy</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>125</width>
-               <height>100</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <widget class="QPushButton" name="pushButton_Japan">
-             <property name="text">
-              <string>Japan</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../empirecoin.qrc">
-               <normaloff>:/icons/japan</normaloff>:/icons/japan</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>125</width>
-               <height>100</height>
-              </size>
-             </property>
-            </widget>
-           </item>
            <item>
             <widget class="QPushButton" name="pushButton_Mexico">
              <property name="text">
@@ -289,6 +272,44 @@
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="pushButton_France">
+             <property name="text">
+              <string>France</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../empirecoin.qrc">
+               <normaloff>:/icons/france</normaloff>:/icons/france</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>125</width>
+               <height>100</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_UK">
+             <property name="text">
+              <string>UK</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../empirecoin.qrc">
+               <normaloff>:/icons/uk</normaloff>:/icons/uk</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>125</width>
+               <height>100</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
             <widget class="QPushButton" name="pushButton_Pakistan">
              <property name="text">
               <string>Pakistan</string>
@@ -305,18 +326,14 @@
              </property>
             </widget>
            </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
-            <widget class="QPushButton" name="pushButton_Russia">
+            <widget class="QPushButton" name="pushButton_Italy">
              <property name="text">
-              <string>Russia</string>
+              <string>Italy</string>
              </property>
              <property name="icon">
               <iconset resource="../empirecoin.qrc">
-               <normaloff>:/icons/russia</normaloff>:/icons/russia</iconset>
+               <normaloff>:/icons/italy</normaloff>:/icons/italy</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -344,30 +361,13 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_UnitedKingdom">
+            <widget class="QPushButton" name="pushButton_Iran">
              <property name="text">
-              <string>United Kingdom</string>
+              <string>Iran</string>
              </property>
              <property name="icon">
               <iconset resource="../empirecoin.qrc">
-               <normaloff>:/icons/unitedkingdom</normaloff>:/icons/unitedkingdom</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>125</width>
-               <height>100</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_UnitedStates">
-             <property name="text">
-              <string>United States</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../empirecoin.qrc">
-               <normaloff>:/icons/unitedstates</normaloff>:/icons/unitedstates</iconset>
+               <normaloff>:/icons/iran</normaloff>:/icons/iran</iconset>
              </property>
              <property name="iconSize">
               <size>

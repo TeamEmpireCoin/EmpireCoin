@@ -30,22 +30,22 @@ public:
     void setWalletModel(WalletModel *walletModel);
 
 public slots:
-    void showVoteForBrazil();
     void showVoteForChina();
-    void showVoteForFrance();
-    void showVoteForGermany();
+    void showVoteForUSA();
     void showVoteForIndia();
+    void showVoteForBrazil();
     void showVoteForIndonesia();
-    void showVoteForIran();
-    void showVoteForItaly();
     void showVoteForJapan();
+    void showVoteForRussia();
+    void showVoteForGermany();
     void showVoteForMexico();
     void showVoteForNigeria();
+    void showVoteForFrance();
+    void showVoteForUK();
     void showVoteForPakistan();
-    void showVoteForRussia();
+    void showVoteForItaly();
     void showVoteForTurkey();
-    void showVoteForUnitedKingdom();
-    void showVoteForUnitedStates();
+    void showVoteForIran();
 
 private:
     void showVoteForNation(std::string nation);
