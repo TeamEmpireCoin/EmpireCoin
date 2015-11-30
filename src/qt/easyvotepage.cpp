@@ -29,38 +29,38 @@ EasyvotePage::EasyvotePage(QWidget *parent) :
     ui->setupUi(this);
 
     // connect a signal to all empire nation buttons
-    connect(ui->pushButton_Brazil, SIGNAL(clicked()), this,
-            SLOT(showVoteForBrazil()));
     connect(ui->pushButton_China, SIGNAL(clicked()), this,
             SLOT(showVoteForChina()));
-    connect(ui->pushButton_France, SIGNAL(clicked()), this,
-            SLOT(showVoteForFrance()));
-    connect(ui->pushButton_Germany, SIGNAL(clicked()), this,
-            SLOT(showVoteForGermany()));
+    connect(ui->pushButton_USA, SIGNAL(clicked()), this,
+            SLOT(showVoteForUSA()));
     connect(ui->pushButton_India, SIGNAL(clicked()), this,
             SLOT(showVoteForIndia()));
+    connect(ui->pushButton_Brazil, SIGNAL(clicked()), this,
+            SLOT(showVoteForBrazil()));
     connect(ui->pushButton_Indonesia, SIGNAL(clicked()), this,
             SLOT(showVoteForIndonesia()));
-    connect(ui->pushButton_Iran, SIGNAL(clicked()), this,
-            SLOT(showVoteForIran()));
-    connect(ui->pushButton_Italy, SIGNAL(clicked()), this,
-            SLOT(showVoteForItaly()));
     connect(ui->pushButton_Japan, SIGNAL(clicked()), this,
             SLOT(showVoteForJapan()));
+    connect(ui->pushButton_Russia, SIGNAL(clicked()), this,
+            SLOT(showVoteForRussia()));
+    connect(ui->pushButton_Germany, SIGNAL(clicked()), this,
+            SLOT(showVoteForGermany()));
     connect(ui->pushButton_Mexico, SIGNAL(clicked()), this,
             SLOT(showVoteForMexico()));
     connect(ui->pushButton_Nigeria, SIGNAL(clicked()), this,
             SLOT(showVoteForNigeria()));
+    connect(ui->pushButton_France, SIGNAL(clicked()), this,
+            SLOT(showVoteForFrance()));
+    connect(ui->pushButton_UK, SIGNAL(clicked()), this,
+            SLOT(showVoteForUK()));
     connect(ui->pushButton_Pakistan, SIGNAL(clicked()), this,
             SLOT(showVoteForPakistan()));
-    connect(ui->pushButton_Russia, SIGNAL(clicked()), this,
-            SLOT(showVoteForRussia()));
+    connect(ui->pushButton_Italy, SIGNAL(clicked()), this,
+            SLOT(showVoteForItaly()));
     connect(ui->pushButton_Turkey, SIGNAL(clicked()), this,
             SLOT(showVoteForTurkey()));
-    connect(ui->pushButton_UnitedKingdom, SIGNAL(clicked()), this,
-            SLOT(showVoteForUnitedKingdom()));
-    connect(ui->pushButton_UnitedStates, SIGNAL(clicked()), this,
-            SLOT(showVoteForUnitedStates()));
+    connect(ui->pushButton_Iran, SIGNAL(clicked()), this,
+            SLOT(showVoteForIran()));
 }
 
 EasyvotePage::~EasyvotePage()
@@ -78,24 +78,14 @@ void EasyvotePage::setWalletModel(WalletModel *model)
     this->walletModel = model;
 }
 
-void EasyvotePage::showVoteForBrazil()
-{
-    showVoteForNation("Brazil");
-}
-
 void EasyvotePage::showVoteForChina()
 {
     showVoteForNation("China");
 }
 
-void EasyvotePage::showVoteForFrance()
+void EasyvotePage::showVoteForUSA()
 {
-    showVoteForNation("France");
-}
-
-void EasyvotePage::showVoteForGermany()
-{
-    showVoteForNation("Germany");
+    showVoteForNation("USA");
 }
 
 void EasyvotePage::showVoteForIndia()
@@ -103,24 +93,29 @@ void EasyvotePage::showVoteForIndia()
     showVoteForNation("India");
 }
 
+void EasyvotePage::showVoteForBrazil()
+{
+    showVoteForNation("Brazil");
+}
+
 void EasyvotePage::showVoteForIndonesia()
 {
     showVoteForNation("Indonesia");
 }
 
-void EasyvotePage::showVoteForIran()
-{
-    showVoteForNation("Iran");
-}
-
-void EasyvotePage::showVoteForItaly()
-{
-    showVoteForNation("Italy");
-}
-
 void EasyvotePage::showVoteForJapan()
 {
     showVoteForNation("Japan");
+}
+
+void EasyvotePage::showVoteForRussia()
+{
+    showVoteForNation("Russia");
+}
+
+void EasyvotePage::showVoteForGermany()
+{
+    showVoteForNation("Germany");
 }
 
 void EasyvotePage::showVoteForMexico()
@@ -133,14 +128,24 @@ void EasyvotePage::showVoteForNigeria()
     showVoteForNation("Nigeria");
 }
 
+void EasyvotePage::showVoteForFrance()
+{
+    showVoteForNation("France");
+}
+
+void EasyvotePage::showVoteForUK()
+{
+    showVoteForNation("UK");
+}
+
 void EasyvotePage::showVoteForPakistan()
 {
     showVoteForNation("Pakistan");
 }
 
-void EasyvotePage::showVoteForRussia()
+void EasyvotePage::showVoteForItaly()
 {
-    showVoteForNation("Russia");
+    showVoteForNation("Italy");
 }
 
 void EasyvotePage::showVoteForTurkey()
@@ -148,14 +153,9 @@ void EasyvotePage::showVoteForTurkey()
     showVoteForNation("Turkey");
 }
 
-void EasyvotePage::showVoteForUnitedKingdom()
+void EasyvotePage::showVoteForIran()
 {
-    showVoteForNation("United Kingdom");
-}
-
-void EasyvotePage::showVoteForUnitedStates()
-{
-    showVoteForNation("United States");
+    showVoteForNation("Iran");
 }
 
 void EasyvotePage::showVoteForNation(std::string nation)

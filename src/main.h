@@ -55,7 +55,7 @@ static const int64 DUST_HARD_LIMIT = 1000;   // 0.00001 EMP mininput
 static const int64 MAX_MONEY = 10000000000 * COIN;
 inline bool MoneyRange(int64 nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
 /** Coinbase transaction outputs can only be spent after this number of new blocks (network rule) */
-static const int COINBASE_MATURITY = 100;
+static const int COINBASE_MATURITY = 10;
 /** Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp. */
 static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
 /** Maximum number of script-checking threads allowed */
@@ -118,22 +118,22 @@ struct CBlockTemplate;
 
 enum NationIndexType
 {
-    Brazil        = 0,
-    China         = 1,
-    France        = 2,
-    Germany       = 3,
-    India         = 4,
-    Indonesia     = 5,
-    Iran          = 6,
-    Italy         = 7,
-    Japan         = 8,
-    Mexico        = 9,
-    Nigeria       = 10,
-    Pakistan      = 11,
-    Russia        = 12,
-    Turkey        = 13,
-    UnitedKingdom = 14,
-    UnitedStates  = 15,
+    China         = 0,
+    USA           = 1,
+    India         = 2,
+    Brazil        = 3,
+    Indonesia     = 4,
+    Japan         = 5,
+    Russia        = 6,
+    Germany       = 7,
+    Mexico        = 8,
+    Nigeria       = 9,
+    France        = 10,
+    UK            = 11,
+    Pakistan      = 12,
+    Italy         = 13,
+    Turkey        = 14,
+    Iran          = 15,
     Unknown       = 16
 };
 
