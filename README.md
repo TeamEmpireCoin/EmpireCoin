@@ -4,7 +4,7 @@ EmpireCoin integration/staging tree
 http://www.EmpireCoin.org
 
 Copyright (c) 2009-2014 Bitcoin Developers
-Copyright (c) 2011-2014 EmpireCoin Developers
+Copyright (c) 2015-2016 EmpireCoin Developers
 
 What is EmpireCoin?
 ----------------
@@ -15,7 +15,7 @@ EmpireCoin is new cryptocurrency using SHA256 as a proof-of-work algorithm.
  - An uncapped supply of coins
 
 For more information, as well as an immediately useable, binary version of
-the EmpireCoin client sofware, see http://www.EmpireCoin.org.
+the EmpireCoin client sofware, see http://empireco.in
 
 License
 -------
