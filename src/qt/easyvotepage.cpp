@@ -234,10 +234,13 @@ void EasyvotePage::showVoteForNation(std::string nation)
                             break;
                         case WalletModel::OK:
                         {
-                            QString tmp = "Transaction confirmed with tx hash " + ret.hex;
-                            msgBox.setText(tmp);
+                            // This was originally for debugging
+                            /* QString tmp = "Transaction confirmed with tx hash " + ret.hex; */
+                            /* msgBox.setText(tmp); */
                             break;
                         }
+                        case WalletModel::Aborted:
+                            break;
                     }
                     msgBox.exec();
                 }

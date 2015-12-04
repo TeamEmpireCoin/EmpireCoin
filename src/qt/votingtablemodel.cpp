@@ -301,21 +301,22 @@ QModelIndex VotingTableModel::index(int row, int column, const QModelIndex &pare
 
 void VotingTableModel::updateEntry(const QString &address, const QString &label, const QString &nation, int status)
 {
-    fprintf(stderr, "VotingTableModel::updateEntry called!\n");
-    // Update voting address book model from EmpireCoin core
-    priv->updateEntry(address, label, nation, status);
+    if (walletModel->validateVotingAddress(address))
+    {
+        // Update voting address book model from EmpireCoin core
+        priv->updateEntry(address, label, nation, status);
+    }
 }
 
 QString VotingTableModel::addRow(const QString &label, const QString &address, const QString &nation)
 {
-    fprintf(stderr, "VotingTableModel::addRow called!\n");
     std::string strLabel = label.toStdString();
     std::string strAddress = address.toStdString();
     std::string strNation = nation.toStdString();
 
     editStatus = OK;
 
-    if(!walletModel->validateAddress(address))
+    if (!walletModel->validateVotingAddress(address))
     {
         editStatus = INVALID_ADDRESS;
         return QString();

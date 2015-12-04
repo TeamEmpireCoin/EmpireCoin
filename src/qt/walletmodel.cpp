@@ -133,13 +133,13 @@ void WalletModel::updateTransaction(const QString &hash, int status)
 
 void WalletModel::updateAddressBook(const QString &address, const QString &label, bool isMine, int status)
 {
-    if(addressTableModel)
+    if (addressTableModel)
         addressTableModel->updateEntry(address, label, isMine, status);
 }
 
 void WalletModel::updateVotingAddressBook(const QString &address, const QString &label, const QString &nation, int status)
 {
-    if(votingTableModel)
+    if (votingTableModel)
         votingTableModel->updateEntry(address, label, nation, status);
 }
 
@@ -154,12 +154,16 @@ bool WalletModel::validateVotingAddress(const QString &address)
     CEmpireCoinAddress addressParsed(address.toStdString());
     if (addressParsed.IsValid())
     {
-        char c = address[2].toLatin1();
-        static const char* range = "123456789ABCDEFGabcdefg";
-        static const char* range_end = range + strlen(range);
-        for(char* ptr = const_cast<char*>(range); ptr < range_end; ptr++) {
-            if (*ptr == c) {
-                return true;
+        char prefix = address[1].toLatin1();
+        if ((prefix == 'e') || (prefix == 'E'))
+        {
+            char c = address[2].toLatin1();
+            static const char* range = "123456789ABCDEFGabcdefg";
+            static const char* range_end = range + strlen(range);
+            for(char* ptr = const_cast<char*>(range); ptr < range_end; ptr++) {
+                if (*ptr == c) {
+                    return true;
+                }
             }
         }
     }

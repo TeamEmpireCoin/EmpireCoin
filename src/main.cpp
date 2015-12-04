@@ -4213,17 +4213,18 @@ public:
 
 NationIndexType getNationIndexByVotingAddress(std::string address)
 {
-    if (address.size() < 10)
+    if (!isStrVotingAddress(address))
         return Unknown;
 
     std::string prefixStr = address.substr(2, 1);
-    const char c = std::toupper(prefixStr[0]);
+    char c = std::toupper(prefixStr[0]);
+    std::string prefix(1, c);
     typedef std::map<const char, const NationIndexType> NationMapType;
     static NationMapType nationMap = boost::assign::map_list_of
-        ( '1', China ) ( '2', USA ) ( '3', India ) ( '4', Brazil )
-        ( '5', Indonesia ) ( '6', Japan ) ( '7', Russia ) ( '8', Germany )
-        ( '9', Mexico ) ( 'A', Nigeria ) ( 'B', France ) ( 'C', UK )
-        ( 'D', Pakistan ) ( 'E', Italy ) ( 'F', Turkey ) ( 'G', Iran );
+        ( '1', China     ) ( '2', USA     ) ( '3', India  ) ( '4', Brazil )
+        ( '5', Indonesia ) ( '6', Japan   ) ( '7', Russia ) ( '8', Germany )
+        ( '9', Mexico    ) ( 'A', Nigeria ) ( 'B', France ) ( 'C', UK )
+        ( 'D', Pakistan  ) ( 'E', Italy   ) ( 'F', Turkey ) ( 'G', Iran );
 
     NationMapType::iterator iter = nationMap.find(c);
     if (iter != nationMap.end()) {
@@ -4281,8 +4282,10 @@ static NationIndexType getWinningAddresses(
                 blockTmp.BuildMerkleTree();
                 pblock = &blockTmp;
 
-                printf("getWinningAddress: considering block %d (from %d) back with hash %s (containing %d transactions)\n",
-                       i, nHeight, blockTmp.GetHash().GetHex().c_str(), pblock->vtx.size());
+                printf("getWinningAddress: considering block %d (from %d) back "
+                       "with hash %s (containing %d transactions)\n",
+                       i, nHeight, blockTmp.GetHash().GetHex().c_str(),
+                       (int)pblock->vtx.size());
 
                 // Locate and tally up voting transactions
                 for(size_t j = 0; j < pblock->vtx.size(); j++)
@@ -4995,6 +4998,13 @@ static inline bool inVotingRange(char c)
     return false;
 }
 
+bool isStrVotingAddress(const std::string& address)
+{
+    const char* addr = address.c_str();
+    return (((addr[1] == 'e') || (addr[1] == 'E')) &&
+            inVotingRange(addr[2]));
+}
+
 bool isVotingAddress(const CScript& scriptPubKey)
 {
     bool isVotingAddr = false;
@@ -5025,7 +5035,7 @@ static std::map<std::string, bool> addressSpotMap = boost::assign::map_list_of
     ( "a", false ) ( "b", false ) ( "c", false ) ( "d", false )
     ( "e", false ) ( "f", false ) ( "f", false ) ( "g", false );
 
-static inline bool addressSpotTaken(const std::string address)
+static inline bool addressSpotTaken(const std::string& address)
 {
     std::string prefix = address.substr(2, 1);
 
@@ -5050,7 +5060,8 @@ static inline bool addressSpotTaken(const std::string address)
 
 std::string getNationByVotingAddress(std::string address) {
     std::string error = "Unknown";
-    if (address.size() < 10)
+
+    if (!isStrVotingAddress(address))
         return error;
 
     std::string prefixStr = address.substr(2, 1);
@@ -5179,9 +5190,7 @@ static void EmpireCoinAddressMiner(CWallet* pwallet, bool fTestnet, int count)
         {
             pwallet->GetKeyFromPool(newKey, true);
             newAddress = CEmpireCoinAddress(newKey.GetID()).ToString();
-            char c = newAddress[2];
-            if (((newAddress[1] == 'e') || (newAddress[1] == 'E')) &&
-                inVotingRange(c) && !addressSpotTaken(newAddress))
+            if (isStrVotingAddress(newAddress) && !addressSpotTaken(newAddress))
             {
                 found++;
                 printf("Generated Voting Address: %s\n", newAddress.c_str());

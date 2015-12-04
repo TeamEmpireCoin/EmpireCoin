@@ -209,6 +209,7 @@ void GenerateVotingAddresses(CWallet* pwallet, int count);
 void InitializeEmpireCoinAddressMinerState();
 /** Determine if provided address is a voting addresses */
 bool isVotingAddress(const CScript& scriptPubKey);
+bool isStrVotingAddress(const std::string& address);
 /** Retrieve the nation by string name given a voting address */
 std::string getNationByVotingAddress(std::string address);
 /** Retrieve the nation index by the voting address **/
@@ -669,10 +670,6 @@ void UpdateCoins(const CTransaction& tx, CValidationState &state, CCoinsViewCach
             vin.size(),
             vout.size(),
             nLockTime);
-        /* for (unsigned int i = 0; i < vin.size(); i++) */
-        /*     str += "    " + vin[i].ToString() + "\n"; */
-        /* for (unsigned int i = 0; i < vout.size(); i++) */
-        /*     str += "    " + vout[i].ToString() + "\n"; */
         for (unsigned int i = 0; i < vin.size(); i++)
             str += "    " + vin[i].ToString() + "\n";
         for (unsigned int i = 0; i < vout.size(); i++)
@@ -685,7 +682,6 @@ void UpdateCoins(const CTransaction& tx, CValidationState &state, CCoinsViewCach
             {
                 std::string addr = CEmpireCoinAddress(address).ToString();
                 NationIndexType index = getNationIndexByVotingAddress(addr);
-                fprintf(stderr, "CHECKING ADDRESS %s (index = %d)\n", addr.c_str(), (int)index);
                 if (index != Unknown)
                 {
                     char buf[256] = {0};

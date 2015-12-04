@@ -982,7 +982,7 @@ bool AppInit2(boost::thread_group& threadGroup)
         int numBlocks = 0;
         for (map<uint256, CBlockIndex*>::iterator mi = mapBlockIndex.begin(); mi != mapBlockIndex.end(); ++mi)
         {
-            uint256 hash = (*mi).first;
+            /* uint256 hash = (*mi).first; */
             CBlockIndex* pindex = (*mi).second;
             CBlock block;
             block.ReadFromDisk(pindex);
