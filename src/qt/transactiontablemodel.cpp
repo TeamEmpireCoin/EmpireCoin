@@ -358,7 +358,9 @@ QString TransactionTableModel::formatTxType(const TransactionRecord *wtx) const
 {
     switch(wtx->type)
     {
-    case TransactionRecord::VotingPayment:
+    case TransactionRecord::WinningPayout:
+        return tr("Won payment with");
+    case TransactionRecord::VoteSubmission:
         return tr("Voted with");
     case TransactionRecord::RecvWithAddress:
         return tr("Received with");
@@ -380,8 +382,9 @@ QVariant TransactionTableModel::txAddressDecoration(const TransactionRecord *wtx
 {
     switch(wtx->type)
     {
-    case TransactionRecord::VotingPayment:
     case TransactionRecord::Generated:
+    case TransactionRecord::VoteSubmission:
+    case TransactionRecord::WinningPayout:
         return QIcon(":/icons/tx_mined");
     case TransactionRecord::RecvWithAddress:
     case TransactionRecord::RecvFromOther:
@@ -407,7 +410,8 @@ QString TransactionTableModel::formatTxToAddress(const TransactionRecord *wtx, b
         return lookupAddress(wtx->address, tooltip);
     case TransactionRecord::SendToOther:
         return QString::fromStdString(wtx->address);
-    case TransactionRecord::VotingPayment:
+    case TransactionRecord::WinningPayout:
+    case TransactionRecord::VoteSubmission:
     case TransactionRecord::SendToSelf:
         return lookupAddress(wtx->address, tooltip);
     default:
@@ -430,7 +434,7 @@ QVariant TransactionTableModel::addressColor(const TransactionRecord *wtx) const
             return COLOR_BAREADDRESS;
         break;
     }
-    case TransactionRecord::VotingPayment:
+    case TransactionRecord::VoteSubmission:
     case TransactionRecord::SendToSelf:
         return COLOR_VOTE;
     default:
@@ -523,7 +527,7 @@ QString TransactionTableModel::formatTooltip(const TransactionRecord *rec) const
     QString tooltip = formatTxStatus(rec) + QString("\n") + formatTxType(rec);
     if(rec->type==TransactionRecord::RecvFromOther || rec->type==TransactionRecord::SendToOther ||
        rec->type==TransactionRecord::SendToAddress || rec->type==TransactionRecord::RecvWithAddress ||
-       rec->type==TransactionRecord::VotingPayment)
+       rec->type==TransactionRecord::VoteSubmission || rec->type==TransactionRecord::WinningPayout)
     {
         tooltip += QString(" ") + formatTxToAddress(rec, true);
     }
@@ -586,12 +590,18 @@ QVariant TransactionTableModel::data(const QModelIndex &index, int role) const
         {
             return COLOR_UNCONFIRMED;
         }
-        if(index.column() == Amount && (rec->credit+rec->debit) < 0)
+        if((index.column() == Amount) &&
+           (((rec->credit+rec->debit) < 0) ||
+            ((abs(rec->credit) - abs(rec->debit)) <= 0)))
         {
             return COLOR_NEGATIVE;
         }
         if(index.column() == ToAddress)
         {
+            std::string label = walletModel->getAddressTableModel()->labelForAddress(
+                QString::fromStdString(rec->address)).toStdString();
+            if (label.find("Winning") != std::string::npos)
+                return COLOR_WINNING_PAYOUT;
             return addressColor(rec);
         }
         break;

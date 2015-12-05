@@ -54,7 +54,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
                     // Received by EmpireCoin Address
                     sub.address = CEmpireCoinAddress(address).ToString();
                     sub.type = (isStrVotingAddress(sub.address) ?
-                                TransactionRecord::VotingPayment :
+                                TransactionRecord::VoteSubmission :
                                 TransactionRecord::RecvWithAddress);
                 }
                 else

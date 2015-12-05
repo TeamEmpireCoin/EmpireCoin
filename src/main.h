@@ -696,7 +696,7 @@ void UpdateCoins(const CTransaction& tx, CValidationState &state, CCoinsViewCach
                     char buf[256] = {0};
                     snprintf(buf, 256, "Found voting address %s (amount = %lld) with nation index %d\n",
                              addr.c_str(), amount, (int)index);
-                    fprintf(stderr, "%s", buf);
+                    /* fprintf(stderr, "%s", buf); */
                     str += std::string(buf);
                 }
             }

@@ -5,6 +5,7 @@
 #include "easyvotepage.h"
 #include "ui_easyvotepage.h"
 
+#include "main.h"
 #include "clientmodel.h"
 #include "walletmodel.h"
 #include "empirecoinunits.h"
@@ -187,9 +188,10 @@ void EasyvotePage::showVoteForNation(std::string nation)
             {
                 SendCoinsRecipient vote;
                 vote.address = dlg.getAddress();
-                // if we ever see this label, it's because it was a
-                // winning round that we've received back on payout.
-                vote.label = QString("Submitted vote for ") + vote.address;
+                std::string addr = getNationByVotingAddress(vote.address.toStdString());
+
+                QString qaddr(addr.c_str());
+                vote.label = QString("Winning payout for ") + qaddr;
                 vote.amount = (vote_amount.toULongLong() * 100000000);
 
                 printf("Submitting a vote for %s in the amount of %lld\n",

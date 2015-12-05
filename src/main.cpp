@@ -1146,16 +1146,19 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
         {
             // If the new block's timestamp is more than 2* 10 minutes
             // then allow mining of a min-difficulty block.
-            if (pblock->nTime > pindexLast->nTime + nTargetSpacing*2)
+            // FIXME: Constant difficulty for testnet while testing
+            // FIXME: Constant difficulty for testnet while testing
+            // FIXME: Constant difficulty for testnet while testing
+            /* if (pblock->nTime > pindexLast->nTime + nTargetSpacing*2) */
                 return nProofOfWorkLimit;
-            else
-            {
-                // Return the last non-special-min-difficulty-rules-block
-                const CBlockIndex* pindex = pindexLast;
-                while (pindex->pprev && pindex->nHeight % nInterval != 0 && pindex->nBits == nProofOfWorkLimit)
-                    pindex = pindex->pprev;
-                return pindex->nBits;
-            }
+            /* else */
+            /* { */
+            /*     // Return the last non-special-min-difficulty-rules-block */
+            /*     const CBlockIndex* pindex = pindexLast; */
+            /*     while (pindex->pprev && pindex->nHeight % nInterval != 0 && pindex->nBits == nProofOfWorkLimit) */
+            /*         pindex = pindex->pprev; */
+            /*     return pindex->nBits; */
+            /* } */
         }
 
         return pindexLast->nBits;
@@ -2111,19 +2114,20 @@ bool CBlock::CheckBlock(CValidationState &state, bool fCheckPOW, bool fCheckMerk
 
     // First transaction may or may not be a votingPayout.  If it is a
     // voting payout, ensure here that it contains valid outputs
-    // (i.e. voting addresses).
+    // (i.e. voting addresses only).
     if (vtx[0].IsVotingPayout())
     {
-        printf("Found a payoutOutput -- verifying payouts are valid\n");
-        BOOST_FOREACH(const CTxOut& txout, vtx[0].vout)
+        size_t i = 0;
+        // This loop skips the mining reward at index 0
+        for(i = 1; i < vtx[0].vout.size(); i++)
         {
-            const CScript& curScriptPubKey = txout.scriptPubKey;
+            const CScript& curScriptPubKey = vtx[0].vout[i].scriptPubKey;
             CTxDestination address;
             if (ExtractDestination(curScriptPubKey, address))
             {
                 std::string addr = CEmpireCoinAddress(address).ToString();
                 NationIndexType index = getNationIndexByVotingAddress(addr);
-                printf("Payout found for %s (nation = %d)\n", addr.c_str(), (int)index);
+                printf("Payout tx found for %s (nation = %d)\n", addr.c_str(), (int)index);
                 if (index == Unknown)
                     return state.Invalid(error("CheckBlock() : invalid payout tx in block"));
             }
@@ -4419,21 +4423,25 @@ static NationIndexType getWinningAddresses(
             printf("Got a tie! Using low score as round winner\n");
             highIndex = lowIndex;
         }
-        else if (high == 0)
+
+        if (high != 0)
+        {
+            printf("Got a winner with Index %d\n", (int)highIndex);
+            NationTxMapType::iterator ntxIter = nationTxMap.find(
+                static_cast<NationIndexType>(highIndex));
+            if (ntxIter != nationTxMap.end())
+            {
+                // once we have all winning nations, add all WinningAddress objs
+                winningAddresses.swap(ntxIter->second);
+                printf("There are %d winning addresses\n", (int)winningAddresses.size());
+            }
+        }
+        else
         {
             printf("Found no winners this voting period\n");
-            goto end;
-        }
-
-        printf("Got a winner with Index %d\n", (int)highIndex);
-        NationTxMapType::iterator ntxIter = nationTxMap.find(index);
-        if (ntxIter != nationTxMap.end())
-        {
-            // once we have all winning nations, add all WinningAddress objs
-            winningAddresses.swap(ntxIter->second);
+            index = Unknown;
         }
     }
-  end:
     return index;
 }
 

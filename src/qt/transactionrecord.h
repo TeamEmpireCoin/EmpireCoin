@@ -75,7 +75,8 @@ public:
         RecvWithAddress,
         RecvFromOther,
         SendToSelf,
-        VotingPayment
+        VoteSubmission,
+        WinningPayout
     };
 
     /** Number of confirmation needed for transaction */
