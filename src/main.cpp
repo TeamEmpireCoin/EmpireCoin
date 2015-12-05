@@ -2108,6 +2108,29 @@ bool CBlock::CheckBlock(CValidationState &state, bool fCheckPOW, bool fCheckMerk
     // First transaction must be coinbase, the rest must not be
     if (vtx.empty() || !vtx[0].IsCoinBase())
         return state.DoS(100, error("CheckBlock() : first tx is not coinbase"));
+
+    // First transaction may or may not be a votingPayout.  If it is a
+    // voting payout, ensure here that it contains valid outputs
+    // (i.e. voting addresses).
+    if (vtx[0].IsVotingPayout())
+    {
+        printf("Found a payoutOutput -- verifying payouts are valid\n");
+        BOOST_FOREACH(const CTxOut& txout, vtx[0].vout)
+        {
+            const CScript& curScriptPubKey = txout.scriptPubKey;
+            CTxDestination address;
+            if (ExtractDestination(curScriptPubKey, address))
+            {
+                std::string addr = CEmpireCoinAddress(address).ToString();
+                NationIndexType index = getNationIndexByVotingAddress(addr);
+                printf("Payout found for %s (nation = %d)\n", addr.c_str(), (int)index);
+                if (index == Unknown)
+                    return state.Invalid(error("CheckBlock() : invalid payout tx in block"));
+            }
+        }
+    }
+
+    // verify that no other transaction is a coinbase tx
     for (unsigned int i = 1; i < vtx.size(); i++)
         if (vtx[i].IsCoinBase())
             return state.DoS(100, error("CheckBlock() : more than one coinbases"));
