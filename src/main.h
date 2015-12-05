@@ -677,6 +677,7 @@ void UpdateCoins(const CTransaction& tx, CValidationState &state, CCoinsViewCach
             vin.size(),
             vout.size(),
             nLockTime);
+
         for (unsigned int i = 0; i < vin.size(); i++)
             str += "    " + vin[i].ToString() + "\n";
         for (unsigned int i = 0; i < vout.size(); i++)
@@ -687,13 +688,15 @@ void UpdateCoins(const CTransaction& tx, CValidationState &state, CCoinsViewCach
             CTxDestination address;
             if (ExtractDestination(curScriptPubKey, address))
             {
+                int64 amount = vout[i].nValue;
                 std::string addr = CEmpireCoinAddress(address).ToString();
                 NationIndexType index = getNationIndexByVotingAddress(addr);
                 if (index != Unknown)
                 {
                     char buf[256] = {0};
-                    fprintf(stderr, "Found voting address %s with nation index %d\n", addr.c_str(), (int)index);
-                    snprintf(buf, 128, "Found voting address %s with nation index %d\n", addr.c_str(), (int)index);
+                    snprintf(buf, 256, "Found voting address %s (amount = %lld) with nation index %d\n",
+                             addr.c_str(), amount, (int)index);
+                    fprintf(stderr, "%s", buf);
                     str += std::string(buf);
                 }
             }
@@ -1527,8 +1530,6 @@ public:
 
         return true;
     }
-
-
 
     void print() const
     {

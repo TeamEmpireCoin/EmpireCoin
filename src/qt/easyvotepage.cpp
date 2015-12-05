@@ -189,11 +189,11 @@ void EasyvotePage::showVoteForNation(std::string nation)
                 vote.address = dlg.getAddress();
                 // if we ever see this label, it's because it was a
                 // winning round that we've received back on payout.
-                vote.label = QString("Winning vote for ") + vote.address;
+                vote.label = QString("Submitted vote for ") + vote.address;
                 vote.amount = (vote_amount.toULongLong() * 100000000);
 
                 printf("Submitting a vote for %s in the amount of %lld\n",
-                       vote.address.toStdString().c_str(), vote.amount);
+                       vote.address.toStdString().c_str(), (vote.amount / 100000000));
 
                 QList<SendCoinsRecipient> l;
                 l.append(vote);
@@ -237,9 +237,11 @@ void EasyvotePage::showVoteForNation(std::string nation)
                             // This was originally for debugging
                             /* QString tmp = "Transaction confirmed with tx hash " + ret.hex; */
                             /* msgBox.setText(tmp); */
-                            break;
+                            return;
                         }
                         case WalletModel::Aborted:
+                            QString tmp = "Transaction aborted.";
+                            msgBox.setText(tmp);
                             break;
                     }
                     msgBox.exec();

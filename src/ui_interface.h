@@ -19,7 +19,8 @@ enum ChangeType
 {
     CT_NEW,
     CT_UPDATED,
-    CT_DELETED
+    CT_DELETED,
+    CT_NEW_VOTE
 };
 
 /** Signals for UI communication. */
