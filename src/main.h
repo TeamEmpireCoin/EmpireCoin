@@ -209,6 +209,7 @@ void GenerateVotingAddresses(CWallet* pwallet, int count);
 void InitializeEmpireCoinAddressMinerState();
 /** Determine if provided address is a voting addresses */
 bool isVotingAddress(const CScript& scriptPubKey);
+bool isStrVotingAddress(const std::string& address);
 /** Retrieve the nation by string name given a voting address */
 std::string getNationByVotingAddress(std::string address);
 /** Retrieve the nation index by the voting address **/
@@ -365,6 +366,7 @@ public:
     )
 
     bool IsFinal() const
+
     {
         return (nSequence == std::numeric_limits<unsigned int>::max());
     }
@@ -582,6 +584,12 @@ public:
         return (vin.size() == 1 && vin[0].prevout.IsNull());
     }
 
+    bool IsVotingPayout() const
+    {
+        return (vin.size() == 1 && vin[0].prevout.IsNull() &&
+                vout.size() > 1);
+    }
+
     /** Check for standard transaction types
         @return True if all outputs (scriptPubKeys) use only standard transaction forms
     */
@@ -669,10 +677,7 @@ void UpdateCoins(const CTransaction& tx, CValidationState &state, CCoinsViewCach
             vin.size(),
             vout.size(),
             nLockTime);
-        /* for (unsigned int i = 0; i < vin.size(); i++) */
-        /*     str += "    " + vin[i].ToString() + "\n"; */
-        /* for (unsigned int i = 0; i < vout.size(); i++) */
-        /*     str += "    " + vout[i].ToString() + "\n"; */
+
         for (unsigned int i = 0; i < vin.size(); i++)
             str += "    " + vin[i].ToString() + "\n";
         for (unsigned int i = 0; i < vout.size(); i++)
@@ -683,14 +688,15 @@ void UpdateCoins(const CTransaction& tx, CValidationState &state, CCoinsViewCach
             CTxDestination address;
             if (ExtractDestination(curScriptPubKey, address))
             {
+                int64 amount = vout[i].nValue;
                 std::string addr = CEmpireCoinAddress(address).ToString();
                 NationIndexType index = getNationIndexByVotingAddress(addr);
-                fprintf(stderr, "CHECKING ADDRESS %s (index = %d)\n", addr.c_str(), (int)index);
                 if (index != Unknown)
                 {
                     char buf[256] = {0};
-                    fprintf(stderr, "Found voting address %s with nation index %d\n", addr.c_str(), (int)index);
-                    snprintf(buf, 128, "Found voting address %s with nation index %d\n", addr.c_str(), (int)index);
+                    snprintf(buf, 256, "Found voting address %s (amount = %lld) with nation index %d\n",
+                             addr.c_str(), amount, (int)index);
+                    /* fprintf(stderr, "%s", buf); */
                     str += std::string(buf);
                 }
             }
@@ -1524,8 +1530,6 @@ public:
 
         return true;
     }
-
-
 
     void print() const
     {

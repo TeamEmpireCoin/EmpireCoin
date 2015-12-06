@@ -68,9 +68,12 @@ public:
                 const CEmpireCoinAddress& address = item.first;
                 const std::string& strName = item.second;
                 bool fMine = IsMine(*wallet, address.Get());
-                cachedAddressTable.append(AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
-                                  QString::fromStdString(strName),
-                                  QString::fromStdString(address.ToString())));
+                std::string addr = address.ToString();
+                if (!isStrVotingAddress(addr))
+                    cachedAddressTable.append(
+                        AddressTableEntry(fMine ? AddressTableEntry::Receiving : AddressTableEntry::Sending,
+                                          QString::fromStdString(strName),
+                                          QString::fromStdString(addr)));
             }
         }
         // qLowerBound() and qUpperBound() require our cachedAddressTable list to be sorted in asc order
@@ -91,6 +94,10 @@ public:
 
         switch(status)
         {
+        case CT_NEW_VOTE:
+            // we don't show votes as received, even though they are
+            // cast by sending a transaction to our voting addresses
+            break;
         case CT_NEW:
             if(inModel)
             {

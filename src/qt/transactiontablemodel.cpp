@@ -358,6 +358,10 @@ QString TransactionTableModel::formatTxType(const TransactionRecord *wtx) const
 {
     switch(wtx->type)
     {
+    case TransactionRecord::WinningPayout:
+        return tr("Won payment with");
+    case TransactionRecord::VoteSubmission:
+        return tr("Voted with");
     case TransactionRecord::RecvWithAddress:
         return tr("Received with");
     case TransactionRecord::RecvFromOther:
@@ -379,6 +383,8 @@ QVariant TransactionTableModel::txAddressDecoration(const TransactionRecord *wtx
     switch(wtx->type)
     {
     case TransactionRecord::Generated:
+    case TransactionRecord::VoteSubmission:
+    case TransactionRecord::WinningPayout:
         return QIcon(":/icons/tx_mined");
     case TransactionRecord::RecvWithAddress:
     case TransactionRecord::RecvFromOther:
@@ -404,8 +410,10 @@ QString TransactionTableModel::formatTxToAddress(const TransactionRecord *wtx, b
         return lookupAddress(wtx->address, tooltip);
     case TransactionRecord::SendToOther:
         return QString::fromStdString(wtx->address);
+    case TransactionRecord::WinningPayout:
+    case TransactionRecord::VoteSubmission:
     case TransactionRecord::SendToSelf:
-        return QString::fromStdString("Submitted vote");
+        return lookupAddress(wtx->address, tooltip);
     default:
         return tr("(n/a)");
     }
@@ -416,16 +424,19 @@ QVariant TransactionTableModel::addressColor(const TransactionRecord *wtx) const
     // Show addresses without label in a less visible color
     switch(wtx->type)
     {
-    case TransactionRecord::RecvWithAddress:
     case TransactionRecord::SendToAddress:
+        return COLOR_NEGATIVE;
+    case TransactionRecord::RecvWithAddress:
     case TransactionRecord::Generated:
-        {
+    {
         QString label = walletModel->getAddressTableModel()->labelForAddress(QString::fromStdString(wtx->address));
         if(label.isEmpty())
             return COLOR_BAREADDRESS;
-        } break;
-    /* case TransactionRecord::SendToSelf: */
-    /*     return COLOR_BAREADDRESS; */
+        break;
+    }
+    case TransactionRecord::VoteSubmission:
+    case TransactionRecord::SendToSelf:
+        return COLOR_VOTE;
     default:
         break;
     }
@@ -435,30 +446,24 @@ QVariant TransactionTableModel::addressColor(const TransactionRecord *wtx) const
 QString TransactionTableModel::formatTxAmount(const TransactionRecord *wtx, bool showUnconfirmed) const
 {
     QString str;
-    /* printf("formatTxAmount got debit of %lld and credit of %lld\n", wtx->debit, wtx->credit); */
     if ((wtx->debit == 0) && wtx->credit > 0)
     {
-        /* printf("[0] formatTxAmount setting value to %lld\n", wtx->credit); */
         str = EmpireCoinUnits::format(walletModel->getOptionsModel()->getDisplayUnit(), wtx->credit);
     } 
     else if (abs(wtx->debit) == wtx->credit)
     {
-        /* printf("[1] formatTxAmount setting value to %lld\n", wtx->debit); */
         str = EmpireCoinUnits::format(walletModel->getOptionsModel()->getDisplayUnit(), wtx->debit);
     }
     else if (abs(wtx->debit) > wtx->credit)
     {
-        /* printf("[2] formatTxAmount setting value to %lld\n", -1 * wtx->credit); */
         str = EmpireCoinUnits::format(walletModel->getOptionsModel()->getDisplayUnit(), -1 * wtx->credit);
     }
     else if (wtx->credit > abs(wtx->debit))
     {
-        /* printf("[3] formatTxAmount setting value to %lld\n", -1 * wtx->credit); */
         str = EmpireCoinUnits::format(walletModel->getOptionsModel()->getDisplayUnit(), -1 * wtx->credit);
     }
     else
     {
-        /* printf("[4] formatTxAmount setting value to %lld\n", wtx->credit + wtx->debit); */
         str = EmpireCoinUnits::format(walletModel->getOptionsModel()->getDisplayUnit(), wtx->credit + wtx->debit);
     }
 
@@ -469,7 +474,6 @@ QString TransactionTableModel::formatTxAmount(const TransactionRecord *wtx, bool
             str = QString("[") + str + QString("]");
         }
     }
-    /* printf("formatTxAmount returning %s\n", str.toStdString().c_str()); */
     return QString(str);
 }
 
@@ -522,7 +526,8 @@ QString TransactionTableModel::formatTooltip(const TransactionRecord *rec) const
 {
     QString tooltip = formatTxStatus(rec) + QString("\n") + formatTxType(rec);
     if(rec->type==TransactionRecord::RecvFromOther || rec->type==TransactionRecord::SendToOther ||
-       rec->type==TransactionRecord::SendToAddress || rec->type==TransactionRecord::RecvWithAddress)
+       rec->type==TransactionRecord::SendToAddress || rec->type==TransactionRecord::RecvWithAddress ||
+       rec->type==TransactionRecord::VoteSubmission || rec->type==TransactionRecord::WinningPayout)
     {
         tooltip += QString(" ") + formatTxToAddress(rec, true);
     }
@@ -585,12 +590,18 @@ QVariant TransactionTableModel::data(const QModelIndex &index, int role) const
         {
             return COLOR_UNCONFIRMED;
         }
-        if(index.column() == Amount && (rec->credit+rec->debit) < 0)
+        if((index.column() == Amount) &&
+           (((rec->credit+rec->debit) < 0) ||
+            ((abs(rec->credit) - abs(rec->debit)) <= 0)))
         {
             return COLOR_NEGATIVE;
         }
         if(index.column() == ToAddress)
         {
+            std::string label = walletModel->getAddressTableModel()->labelForAddress(
+                QString::fromStdString(rec->address)).toStdString();
+            if (label.find("Winning") != std::string::npos)
+                return COLOR_WINNING_PAYOUT;
             return addressColor(rec);
         }
         break;

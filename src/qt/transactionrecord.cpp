@@ -7,6 +7,7 @@
 #include "wallet.h"
 #include "base58.h"
 
+
 /* Return positive answer if transaction should be shown in list.
  */
 bool TransactionRecord::showTransaction(const CWalletTx &wtx)
@@ -51,8 +52,10 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
                 if (ExtractDestination(txout.scriptPubKey, address) && IsMine(*wallet, address))
                 {
                     // Received by EmpireCoin Address
-                    sub.type = TransactionRecord::RecvWithAddress;
                     sub.address = CEmpireCoinAddress(address).ToString();
+                    sub.type = (isStrVotingAddress(sub.address) ?
+                                TransactionRecord::VoteSubmission :
+                                TransactionRecord::RecvWithAddress);
                 }
                 else
                 {
@@ -65,7 +68,6 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
                     // Generated
                     sub.type = TransactionRecord::Generated;
                 }
-
                 parts.append(sub);
             }
         }
@@ -82,28 +84,27 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
 
         if (fAllFromMe && fAllToMe)
         {
-            // Payment to self
-
-            // if the payment is a vote, don't do anything special since we all
-            bool isAllVotingAddrs = false;
-            BOOST_FOREACH(const CTxOut& curtxout, wtx.vout)
-                isAllVotingAddrs |= isVotingAddress(curtxout.scriptPubKey);
-
-            int64 nChange = 0;
-            if (isAllVotingAddrs)
+            // Payment to self (i.e. a vote)
+            std::string addr;
+            CTxDestination address;
+            BOOST_FOREACH(const CTxOut& txout, wtx.vout)
             {
-            /*     printf("Doing nothing special, detected a vote payment to self\n"); */
-            /* } */
-            /* else */
-            /* { */
-                nChange = wtx.GetChange();
+                if (ExtractDestination(txout.scriptPubKey, address))
+                {
+                    addr = CEmpireCoinAddress(address).ToString();
+                    if (isStrVotingAddress(addr))
+                        break;
+                }
             }
 
-            parts.append(TransactionRecord(hash, nTime, TransactionRecord::SendToSelf, "",
-                            -(nDebit - nChange), nCredit - nChange));
+            int64 nChange = 0;
+            nChange = wtx.GetChange();
+            parts.append(
+                TransactionRecord(hash, nTime, TransactionRecord::SendToSelf,
+                                  "Vote submission for " + getNationByVotingAddress(addr),
+                                  -(nDebit - nChange), nCredit - nChange));
         }
-        else if (fAllFromMe)
-        /* if (fAllFromMe) */
+        if (fAllFromMe)
         {
             //
             // Debit

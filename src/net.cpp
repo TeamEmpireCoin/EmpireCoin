@@ -1182,9 +1182,10 @@ static const char *strMainNetDNSSeed[][2] = {
 };
 
 static const char *strTestNetDNSSeed[][2] = {
-    {"EmpireCointools.com", "testnet-seed.EmpireCointools.com"},
-    {"xurious.com", "testnet-seed.ltc.xurious.com"},
-    {"wemine-testnet.com", "dnsseed.wemine-testnet.com"},
+    // FIXME: temporarily disable all dnsseed nodes for testing
+    /* {"EmpireCointools.com", "testnet-seed.EmpireCointools.com"}, */
+    /* {"xurious.com", "testnet-seed.ltc.xurious.com"}, */
+    /* {"wemine-testnet.com", "dnsseed.wemine-testnet.com"}, */
     {NULL, NULL}
 };
 

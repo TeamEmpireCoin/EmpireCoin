@@ -1146,16 +1146,19 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
         {
             // If the new block's timestamp is more than 2* 10 minutes
             // then allow mining of a min-difficulty block.
-            if (pblock->nTime > pindexLast->nTime + nTargetSpacing*2)
+            // FIXME: Constant difficulty for testnet while testing
+            // FIXME: Constant difficulty for testnet while testing
+            // FIXME: Constant difficulty for testnet while testing
+            /* if (pblock->nTime > pindexLast->nTime + nTargetSpacing*2) */
                 return nProofOfWorkLimit;
-            else
-            {
-                // Return the last non-special-min-difficulty-rules-block
-                const CBlockIndex* pindex = pindexLast;
-                while (pindex->pprev && pindex->nHeight % nInterval != 0 && pindex->nBits == nProofOfWorkLimit)
-                    pindex = pindex->pprev;
-                return pindex->nBits;
-            }
+            /* else */
+            /* { */
+            /*     // Return the last non-special-min-difficulty-rules-block */
+            /*     const CBlockIndex* pindex = pindexLast; */
+            /*     while (pindex->pprev && pindex->nHeight % nInterval != 0 && pindex->nBits == nProofOfWorkLimit) */
+            /*         pindex = pindex->pprev; */
+            /*     return pindex->nBits; */
+            /* } */
         }
 
         return pindexLast->nBits;
@@ -2108,6 +2111,30 @@ bool CBlock::CheckBlock(CValidationState &state, bool fCheckPOW, bool fCheckMerk
     // First transaction must be coinbase, the rest must not be
     if (vtx.empty() || !vtx[0].IsCoinBase())
         return state.DoS(100, error("CheckBlock() : first tx is not coinbase"));
+
+    // First transaction may or may not be a votingPayout.  If it is a
+    // voting payout, ensure here that it contains valid outputs
+    // (i.e. voting addresses only).
+    if (vtx[0].IsVotingPayout())
+    {
+        size_t i = 0;
+        // This loop skips the mining reward at index 0
+        for(i = 1; i < vtx[0].vout.size(); i++)
+        {
+            const CScript& curScriptPubKey = vtx[0].vout[i].scriptPubKey;
+            CTxDestination address;
+            if (ExtractDestination(curScriptPubKey, address))
+            {
+                std::string addr = CEmpireCoinAddress(address).ToString();
+                NationIndexType index = getNationIndexByVotingAddress(addr);
+                printf("Payout tx found for %s (nation = %d)\n", addr.c_str(), (int)index);
+                if (index == Unknown)
+                    return state.Invalid(error("CheckBlock() : invalid payout tx in block"));
+            }
+        }
+    }
+
+    // verify that no other transaction is a coinbase tx
     for (unsigned int i = 1; i < vtx.size(); i++)
         if (vtx[i].IsCoinBase())
             return state.DoS(100, error("CheckBlock() : more than one coinbases"));
@@ -4213,17 +4240,18 @@ public:
 
 NationIndexType getNationIndexByVotingAddress(std::string address)
 {
-    if (address.size() < 10)
+    if (!isStrVotingAddress(address))
         return Unknown;
 
     std::string prefixStr = address.substr(2, 1);
-    const char c = std::toupper(prefixStr[0]);
+    char c = std::toupper(prefixStr[0]);
+    std::string prefix(1, c);
     typedef std::map<const char, const NationIndexType> NationMapType;
     static NationMapType nationMap = boost::assign::map_list_of
-        ( '1', China ) ( '2', USA ) ( '3', India ) ( '4', Brazil )
-        ( '5', Indonesia ) ( '6', Japan ) ( '7', Russia ) ( '8', Germany )
-        ( '9', Mexico ) ( 'A', Nigeria ) ( 'B', France ) ( 'C', UK )
-        ( 'D', Pakistan ) ( 'E', Italy ) ( 'F', Turkey ) ( 'G', Iran );
+        ( '1', China     ) ( '2', USA     ) ( '3', India  ) ( '4', Brazil )
+        ( '5', Indonesia ) ( '6', Japan   ) ( '7', Russia ) ( '8', Germany )
+        ( '9', Mexico    ) ( 'A', Nigeria ) ( 'B', France ) ( 'C', UK )
+        ( 'D', Pakistan  ) ( 'E', Italy   ) ( 'F', Turkey ) ( 'G', Iran );
 
     NationMapType::iterator iter = nationMap.find(c);
     if (iter != nationMap.end()) {
@@ -4281,8 +4309,10 @@ static NationIndexType getWinningAddresses(
                 blockTmp.BuildMerkleTree();
                 pblock = &blockTmp;
 
-                printf("getWinningAddress: considering block %d (from %d) back with hash %s (containing %d transactions)\n",
-                       i, nHeight, blockTmp.GetHash().GetHex().c_str(), pblock->vtx.size());
+                printf("getWinningAddress: considering block %d (from %d) back "
+                       "with hash %s (containing %d transactions)\n",
+                       i, nHeight, blockTmp.GetHash().GetHex().c_str(),
+                       (int)pblock->vtx.size());
 
                 // Locate and tally up voting transactions
                 for(size_t j = 0; j < pblock->vtx.size(); j++)
@@ -4393,21 +4423,25 @@ static NationIndexType getWinningAddresses(
             printf("Got a tie! Using low score as round winner\n");
             highIndex = lowIndex;
         }
-        else if (high == 0)
+
+        if (high != 0)
+        {
+            printf("Got a winner with Index %d\n", (int)highIndex);
+            NationTxMapType::iterator ntxIter = nationTxMap.find(
+                static_cast<NationIndexType>(highIndex));
+            if (ntxIter != nationTxMap.end())
+            {
+                // once we have all winning nations, add all WinningAddress objs
+                winningAddresses.swap(ntxIter->second);
+                printf("There are %d winning addresses\n", (int)winningAddresses.size());
+            }
+        }
+        else
         {
             printf("Found no winners this voting period\n");
-            goto end;
-        }
-
-        printf("Got a winner with Index %d\n", (int)highIndex);
-        NationTxMapType::iterator ntxIter = nationTxMap.find(index);
-        if (ntxIter != nationTxMap.end())
-        {
-            // once we have all winning nations, add all WinningAddress objs
-            winningAddresses.swap(ntxIter->second);
+            index = Unknown;
         }
     }
-  end:
     return index;
 }
 
@@ -4995,6 +5029,13 @@ static inline bool inVotingRange(char c)
     return false;
 }
 
+bool isStrVotingAddress(const std::string& address)
+{
+    const char* addr = address.c_str();
+    return (((addr[1] == 'e') || (addr[1] == 'E')) &&
+            inVotingRange(addr[2]));
+}
+
 bool isVotingAddress(const CScript& scriptPubKey)
 {
     bool isVotingAddr = false;
@@ -5025,7 +5066,7 @@ static std::map<std::string, bool> addressSpotMap = boost::assign::map_list_of
     ( "a", false ) ( "b", false ) ( "c", false ) ( "d", false )
     ( "e", false ) ( "f", false ) ( "f", false ) ( "g", false );
 
-static inline bool addressSpotTaken(const std::string address)
+static inline bool addressSpotTaken(const std::string& address)
 {
     std::string prefix = address.substr(2, 1);
 
@@ -5050,7 +5091,8 @@ static inline bool addressSpotTaken(const std::string address)
 
 std::string getNationByVotingAddress(std::string address) {
     std::string error = "Unknown";
-    if (address.size() < 10)
+
+    if (!isStrVotingAddress(address))
         return error;
 
     std::string prefixStr = address.substr(2, 1);
@@ -5179,9 +5221,7 @@ static void EmpireCoinAddressMiner(CWallet* pwallet, bool fTestnet, int count)
         {
             pwallet->GetKeyFromPool(newKey, true);
             newAddress = CEmpireCoinAddress(newKey.GetID()).ToString();
-            char c = newAddress[2];
-            if (((newAddress[1] == 'e') || (newAddress[1] == 'E')) &&
-                inVotingRange(c) && !addressSpotTaken(newAddress))
+            if (isStrVotingAddress(newAddress) && !addressSpotTaken(newAddress))
             {
                 found++;
                 printf("Generated Voting Address: %s\n", newAddress.c_str());
