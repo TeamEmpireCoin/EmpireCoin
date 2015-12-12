@@ -667,7 +667,7 @@ bool CTxMemPool::accept(CValidationState &state, CTransaction &tx, bool fCheckIn
         return error("CTxMemPool::accept() : CheckTransaction failed");
 
     // Coinbase is only valid in a block, not as a loose transaction
-    if (tx.IsCoinBase())
+    if (tx.IsCoinBase() && !tx.IsVotingPayout())
         return state.DoS(100, error("CTxMemPool::accept() : coinbase as individual tx"));
 
     // To help v0.1.5 clients who would see it as a negative number
@@ -4393,7 +4393,7 @@ static NationIndexType getWinningAddresses(
         // find the nation with the highest score (if there's
         // a tie, the lowest score wins)
         int64 high = 0, low = 100 * COIN, tie = 0;
-        size_t highIndex = 0, lowIndex = 0, tieIndex = 0;
+        NationIndexType highIndex = Unknown, lowIndex = Unknown, tieIndex = Unknown;
         for(size_t cur = 0; cur < 16; cur++)
         {
             if (voteScores[cur] == 0)
@@ -4402,17 +4402,17 @@ static NationIndexType getWinningAddresses(
             if (voteScores[cur] == high)
             {
                 tie = high;
-                tieIndex = cur;
+                tieIndex = static_cast<NationIndexType>(cur);
             }
             if (voteScores[cur] > high)
             {
                 high = voteScores[cur];
-                highIndex = cur;
+                highIndex = static_cast<NationIndexType>(cur);
             }
             if (voteScores[cur] < low)
             {
                 low = voteScores[cur];
-                lowIndex = cur;
+                lowIndex = static_cast<NationIndexType>(cur);
             }
         }
 
@@ -4434,6 +4434,10 @@ static NationIndexType getWinningAddresses(
                 // once we have all winning nations, add all WinningAddress objs
                 winningAddresses.swap(ntxIter->second);
                 printf("There are %d winning addresses\n", (int)winningAddresses.size());
+            }
+            else
+            {
+                printf("ERROR: No winning addresses found for winning nation\n");
             }
         }
         else
