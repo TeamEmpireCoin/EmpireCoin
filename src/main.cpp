@@ -1562,6 +1562,10 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
     // Only change once per interval
     if (((pindexLast->nHeight+1) % nInterval) != 0)
     {
+        if (fTestNet)
+        {
+            return nProofOfWorkLimit;
+        }
         return pindexLast->nBits;
     }
 
