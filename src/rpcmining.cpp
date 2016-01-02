@@ -125,7 +125,6 @@ Value setgenerate(const Array& params, bool fHelp)
     return Value::null;
 }
 
-
 Value gethashespersec(const Array& params, bool fHelp)
 {
     if (fHelp || params.size() != 0)
