@@ -48,6 +48,20 @@ CPubKey CWallet::GenerateNewKey()
     return pubkey;
 }
 
+void CWallet::GenerateNewKeyPairWithoutStoring(CPubKey& pubkey, CKey& secret)
+{
+    bool fCompressed = CanSupportFeature(FEATURE_COMPRPUBKEY); // default to compressed public keys if we want 0.6.0 wallets
+
+    RandAddSeedPerfmon();
+    secret.MakeNewKey(fCompressed);
+
+    // Compressed public keys were introduced in version 0.6.0
+    if (fCompressed)
+        SetMinVersion(FEATURE_COMPRPUBKEY);
+
+    pubkey = secret.GetPubKey();
+}
+
 bool CWallet::AddKeyPubKey(const CKey& secret, const CPubKey &pubkey)
 {
     if (!CCryptoKeyStore::AddKeyPubKey(secret, pubkey))

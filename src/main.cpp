@@ -510,6 +510,23 @@ std::string getNationByVotingAddress(std::string address) {
     return error;
 }
 
+NationIndexType getNationIndexByNation(std::string nation) {
+    boost::to_lower(nation);
+
+    typedef std::map<const std::string, NationIndexType> NationMapType;
+    static NationMapType nationMap = boost::assign::map_list_of
+        ( "china",         China ) ( "usa",         USA ) ( "india",   India ) ( "brazil",   Brazil )
+        ( "indonesia", Indonesia ) ( "japan",     Japan ) ( "russia", Russia ) ( "germany", Germany )
+        ( "mexico",       Mexico ) ( "nigeria", Nigeria ) ( "france", France ) ( "uk",           UK )
+        ( "pakistan",   Pakistan ) ( "italy",     Italy ) ( "turkey", Turkey ) ( "iran",       Iran );
+
+    NationMapType::iterator iter = nationMap.find(nation);
+    if (iter != nationMap.end()) {
+        return iter->second;
+    }
+    return Unknown;
+}
+
 void InitializeEmpireCoinAddressMinerState()
 {
     for(std::map<CTxDestination, std::pair<std::string, std::string> >::iterator iter =
@@ -5310,6 +5327,46 @@ static void EmpireCoinAddressMiner(CWallet* pwallet, bool fTestnet, int count)
     }
 }
 
+typedef struct
+{
+    bool valid;
+    CPubKey pubKey;
+    CKey key;
+} KeyInfo;
+
+static void EmpireCoinSingleAddressMiner(
+    CWallet* pwallet, bool fTestnet, KeyInfo* keyInfo,
+    NationIndexType nation, boost::thread_group* group)
+{
+    RenameThread("EmpireCoinSingleAddressMiner");
+    SetThreadPriority(THREAD_PRIORITY_ABOVE_NORMAL);
+
+    printf("EmpireCoinSingleAddressMiner started\n");
+    try
+    {
+        std::string newAddress;
+        while(!keyInfo->valid)
+        {
+            pwallet->GenerateNewKeyPairWithoutStoring(keyInfo->pubKey, keyInfo->key);
+            newAddress = CEmpireCoinAddress(keyInfo->pubKey.GetID()).ToString();
+            if (isStrVotingAddress(newAddress) &&
+                (getNationIndexByVotingAddress(newAddress) == nation))
+            {
+                keyInfo->valid = true;
+                group->interrupt_all();
+                printf("Generated new Voting Address: %s\n", newAddress.c_str());
+                break;
+            }
+        }
+    }
+    catch (boost::thread_interrupted)
+    {
+        printf("EmpireCoinSingleAddressMiner interrupted\n");
+        throw;
+    }
+    //printf("EmpireCoinSingleAddressMiner terminated\n");
+}
+
 void GenerateVotingAddresses(CWallet* pwallet, int count)
 {
     static boost::thread_group* addressThreads = NULL;
@@ -5333,6 +5390,52 @@ void GenerateVotingAddresses(CWallet* pwallet, int count)
         addressThreads->create_thread(
             boost::bind(&EmpireCoinAddressMiner, pwallet,
                         fTestNet, count));
+}
+
+CPubKey GenerateSingleVotingAddress(CWallet* pwallet, NationIndexType nation)
+{
+    CPubKey pubKey;
+    static boost::thread_group* addressThreads = NULL;
+
+    int i = 0;
+    int nThreads = GetArg("-genproclimit", -1);
+    if (nThreads < 0)
+        nThreads = boost::thread::hardware_concurrency();
+
+    if (addressThreads != NULL)
+    {
+        addressThreads->interrupt_all();
+        delete addressThreads;
+        addressThreads = NULL;
+    }
+
+    if (nThreads == 0)
+        return pubKey;
+
+    KeyInfo* keyInfo = new KeyInfo[nThreads];
+    addressThreads = new boost::thread_group();
+    for(i = 0; i < nThreads; i++)
+    {
+        keyInfo[i].valid = false;
+
+        addressThreads->create_thread(
+            boost::bind(&EmpireCoinSingleAddressMiner, pwallet,
+                        fTestNet, &keyInfo[i], nation, addressThreads));
+    }
+    addressThreads->join_all();
+
+    for(i = 0; i < nThreads; i++)
+    {
+        KeyInfo& cur = keyInfo[i];
+        if (!cur.valid)
+            continue;
+
+        if (!pwallet->AddKeyPubKey(cur.key, cur.pubKey))
+            throw std::runtime_error("EmpireCoinSingleAddressMiner: AddKey failed");
+
+        pubKey = cur.pubKey;
+    }
+    return pubKey;
 }
 
 // Amount compression:

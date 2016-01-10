@@ -125,6 +125,24 @@ Value getnewaddress(const Array& params, bool fHelp)
     return CEmpireCoinAddress(keyID).ToString();
 }
 
+Value getnewvotingaddress(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() != 1)
+        throw runtime_error(
+            "getnewvotingaddress nation\n"
+            "Returns a new EmpireCoin voting address for a specified nation.  "
+            "When the key for the specified nation is generated, it is added "
+            "to the wallet it was generated in.");
+
+    NationIndexType nation = getNationIndexByNation(params[0].get_str());
+    if (nation == Unknown)
+        throw runtime_error("Invalid nation specfied.");
+    
+    // Generate a new voting key that is added to wallet
+    CPubKey newKey = GenerateSingleVotingAddress(pwalletMain, nation);
+    return CEmpireCoinAddress(newKey.GetID()).ToString();
+}
+
 
 CEmpireCoinAddress GetAccountAddress(string strAccount, bool bForceNew=false)
 {

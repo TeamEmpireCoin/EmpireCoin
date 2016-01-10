@@ -207,6 +207,7 @@ bool AbortNode(const std::string &msg);
 /** Generate voting addresses */
 void GenerateVotingAddresses(CWallet* pwallet, int count);
 void InitializeEmpireCoinAddressMinerState();
+CPubKey GenerateSingleVotingAddress(CWallet* pwallet, NationIndexType nation);
 /** Determine if provided address is a voting addresses */
 bool isVotingAddress(const CScript& scriptPubKey);
 bool isStrVotingAddress(const std::string& address);
@@ -214,6 +215,7 @@ bool isStrVotingAddress(const std::string& address);
 std::string getNationByVotingAddress(std::string address);
 /** Retrieve the nation index by the voting address **/
 NationIndexType getNationIndexByVotingAddress(std::string address);
+NationIndexType getNationIndexByNation(std::string nation);
 
 bool GetWalletFile(CWallet* pwallet, std::string &strWalletFileOut);
 
