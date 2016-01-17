@@ -409,10 +409,10 @@ static inline int64 GetBlockValue(int nHeight, int64 nFees)
     return nSubsidy;
 }
 
-// EmpireCoin: 60 minute retarget times (testnet is 72 hours)
-static const int64 nTargetTimespan = (fTestNet ? 72 * 60 * 60 : 60 * 60);
-// EmpireCoin: 10 minute block times (testnet is 1 minute)
-static const int64 nTargetSpacing = (fTestNet  ? 60 : 10 * 60);
+// EmpireCoin: 60 minute retarget times
+static const int64 nTargetTimespan = (60 * 60);
+// EmpireCoin: 2 minute block times
+static const int64 nTargetSpacing = (2 * 60);
 static const int64 nInterval = nTargetTimespan / nTargetSpacing;
 
 static inline bool inVotingRange(char c)
