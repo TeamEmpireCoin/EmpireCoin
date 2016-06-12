@@ -1549,11 +1549,6 @@ uint256 static GetOrphanRoot(const CBlockHeader* pblock)
 //
 unsigned int ComputeMinWork(unsigned int nBase, int64 nTime)
 {
-    // Testnet has min-difficulty blocks
-    // after nTargetSpacing*2 time between blocks:
-    if (fTestNet && nTime > nTargetSpacing*2)
-        return bnProofOfWorkLimit.GetCompact();
-
     CBigNum bnResult;
     bnResult.SetCompact(nBase);
     while (nTime > 0 && bnResult < bnProofOfWorkLimit)
@@ -1579,10 +1574,6 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
     // Only change once per interval
     if (((pindexLast->nHeight+1) % nInterval) != 0)
     {
-        if (fTestNet)
-        {
-            return nProofOfWorkLimit;
-        }
         return pindexLast->nBits;
     }
 
